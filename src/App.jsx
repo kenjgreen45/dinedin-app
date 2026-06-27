@@ -6,18 +6,40 @@ import { useState, useRef } from "react";
 // the instant a restaurant earns or upgrades a prestige tier.
 
 const T = {
-  bg: "#0B0B0D",
-  surface: "#141416",
-  surfaceRaised: "#18181B",
-  border: "#232326",
-  borderStrong: "#2E2E32",
-  text: "#EDECE8",
-  textMuted: "#9A9A9F",
-  textFaint: "#5C5C61",
-  accent: "#C9A876",       // signature gold — used sparingly, for primary actions + Elite tier
+  // Deep indigo-black canvas with vivid color as the star — the COLORPRINT energy.
+  bg: "#0E0B16",
+  surface: "#1A1525",        // raised card surface
+  surfaceRaised: "#221B33",
+  border: "#2A2040",         // subtle violet-tinted borders
+  borderStrong: "#3A2E55",
+  text: "#F0EEF5",           // bright near-white
+  textMuted: "#968EA8",      // muted lavender-gray
+  textFaint: "#665E78",
+  accent: "#C9A876",         // gold reserved for Elite tier + key trust marks
+  accentSoft: "#D8BC8E",
   accentDim: "#C9A87622",
-  success: "#5E8C7A",      // muted sage, not neon green/teal
-  danger: "#B3614F",       // muted clay red, not alarm red
+  // vivid brand spectrum — used for gradient avatars, rating pills, accents
+  pink: "#FF4D8D",
+  purple: "#A24DFF",
+  blue: "#4DA6FF",
+  teal: "#2FE0A8",
+  amber: "#FF9E4D",
+  success: "#2FE0A8",        // vivid teal
+  danger: "#FF5C72",         // vivid coral-red
+};
+
+// Vivid two-stop gradients keyed by a reviewer/restaurant's signature color family.
+const GRADIENTS = {
+  pink:   ["#FF4D8D", "#FF9E4D"],
+  purple: ["#4DA6FF", "#A24DFF"],
+  teal:   ["#2FE0A8", "#4DFFD0"],
+  blue:   ["#4DA6FF", "#7B5EFF"],
+  amber:  ["#FF9E4D", "#FFD24D"],
+  coral:  ["#FF4D8D", "#A24DFF"],
+};
+const gradientCss = (key) => {
+  const g = GRADIENTS[key] || GRADIENTS.purple;
+  return `linear-gradient(135deg, ${g[0]} 0%, ${g[1]} 100%)`;
 };
 
 const reviewers = [
@@ -25,67 +47,71 @@ const reviewers = [
     id: 1,
     name: "Marcus Chen",
     handle: "@marcuseats",
-    color: "#B8835A",
-    colorSecondary: "#6E5470",
-    colorName: "Burnished Copper",
-    gradient: "linear-gradient(135deg, #B8835A 0%, #6E5470 100%)",
+    color: "#FF4D8D",
+    colorSecondary: "#FF9E4D",
+    colorName: "Sunset Coral",
+    gradKey: "pink",
+    gradient: "linear-gradient(135deg, #FF4D8D 0%, #FF9E4D 100%)",
     tasteProfile: "Adventurous palate, leans toward bold flavors and unfamiliar cuisines. Will travel across town for an authentic hole-in-the-wall over a trendy spot. Tips generously, rarely sends food back.",
     verifiedVisits: 312,
     trustScore: 94,
     photoUrl: null,
     dimensions: [
-      { label: "Adventurousness", value: 89, color: "#B8835A" },
-      { label: "Consistency", value: 91, color: "#6E5470" },
-      { label: "Generosity (tipping)", value: 95, color: "#B8835A" },
-      { label: "Review Detail", value: 82, color: "#6E5470" },
+      { label: "Adventurousness", value: 89, color: "#FF4D8D" },
+      { label: "Consistency", value: 91, color: "#FF9E4D" },
+      { label: "Generosity (tipping)", value: 95, color: "#FF4D8D" },
+      { label: "Review Detail", value: 82, color: "#FF9E4D" },
     ],
   },
   {
     id: 2,
     name: "Jasmine Rodriguez",
     handle: "@jasminebites",
-    color: "#4F7A72",
-    colorSecondary: "#B8A04F",
-    colorName: "Verdigris & Brass",
-    gradient: "linear-gradient(135deg, #4F7A72 0%, #B8A04F 100%)",
+    color: "#2FE0A8",
+    colorSecondary: "#4DFFD0",
+    colorName: "Electric Jade",
+    gradKey: "teal",
+    gradient: "linear-gradient(135deg, #2FE0A8 0%, #4DFFD0 100%)",
     tasteProfile: "Chases the new and the Instagrammable. Loves tasting menus and chef's counters. High standards for presentation, slightly less patient with service hiccups.",
     verifiedVisits: 178,
     trustScore: 81,
     photoUrl: null,
     dimensions: [
-      { label: "Adventurousness", value: 95, color: "#4F7A72" },
-      { label: "Consistency", value: 64, color: "#B8A04F" },
-      { label: "Generosity (tipping)", value: 73, color: "#4F7A72" },
-      { label: "Review Detail", value: 90, color: "#B8A04F" },
+      { label: "Adventurousness", value: 95, color: "#2FE0A8" },
+      { label: "Consistency", value: 64, color: "#4DFFD0" },
+      { label: "Generosity (tipping)", value: 73, color: "#2FE0A8" },
+      { label: "Review Detail", value: 90, color: "#4DFFD0" },
     ],
   },
   {
     id: 3,
     name: "Derek Osei",
     handle: "@derekfuels",
-    color: "#3D4A6E",
-    colorSecondary: "#A85A4F",
-    colorName: "Slate & Ember",
-    gradient: "linear-gradient(135deg, #3D4A6E 0%, #A85A4F 100%)",
+    color: "#4DA6FF",
+    colorSecondary: "#A24DFF",
+    colorName: "Cosmic Tide",
+    gradKey: "purple",
+    gradient: "linear-gradient(135deg, #4DA6FF 0%, #A24DFF 100%)",
     tasteProfile: "Macro-conscious, prioritizes protein and quality ingredients over indulgence. Reviews are blunt and data-driven — calls out cooking quality and freshness without sentimentality.",
     verifiedVisits: 245,
     trustScore: 97,
     photoUrl: null,
     dimensions: [
-      { label: "Adventurousness", value: 52, color: "#3D4A6E" },
-      { label: "Consistency", value: 98, color: "#A85A4F" },
-      { label: "Generosity (tipping)", value: 84, color: "#3D4A6E" },
-      { label: "Review Detail", value: 88, color: "#A85A4F" },
+      { label: "Adventurousness", value: 52, color: "#4DA6FF" },
+      { label: "Consistency", value: 98, color: "#A24DFF" },
+      { label: "Generosity (tipping)", value: 84, color: "#4DA6FF" },
+      { label: "Review Detail", value: 88, color: "#A24DFF" },
     ],
   },
   {
     id: 4,
     name: "You",
     handle: "@you",
-    color: "#6B6B70",
-    colorSecondary: "#4A4A4E",
+    color: "#665E78",
+    colorSecondary: "#4A4458",
     colorName: "Unverified",
-    gradient: "linear-gradient(135deg, #6B6B70 0%, #4A4A4E 100%)",
+    gradKey: "purple",
+    gradient: "linear-gradient(135deg, #665E78 0%, #4A4458 100%)",
     tasteProfile: "No verified visits yet. Your taste profile builds as you verify real visits to restaurants.",
     verifiedVisits: 0,
     trustScore: 0,
@@ -183,7 +209,8 @@ function enrichReview(review, restaurantName, tone = "warm") {
 const initialRestaurantsRaw = [
   {
     id: 1,
-    name: "Francine",
+    name: "The Olive Counter",
+    gradKey: "amber",
     cuisine: "Mediterranean · Scottsdale, AZ",
     logoUrl: null,
     tone: "polished",
@@ -199,7 +226,8 @@ const initialRestaurantsRaw = [
   },
   {
     id: 2,
-    name: "Nobu Denver",
+    name: "Sakura & Stone",
+    gradKey: "purple",
     cuisine: "Japanese · Denver, CO",
     logoUrl: null,
     tone: "warm",
@@ -213,7 +241,8 @@ const initialRestaurantsRaw = [
   },
   {
     id: 3,
-    name: "The Wolf's Tailor",
+    name: "Ember & Oak",
+    gradKey: "teal",
     cuisine: "Asian Fusion · Denver, CO",
     logoUrl: null,
     tone: "playful",
@@ -286,28 +315,101 @@ const StorefrontPlaceholder = ({ size }) => (
   </svg>
 );
 
-const ReviewerAvatar = ({ photoUrl = null, size = 80, ringColor = null }) => (
+const ReviewerAvatar = ({ photoUrl = null, size = 80, ringColor = null, gradKey = null, initial = null }) => (
   <div style={{
-    width: size, height: size, borderRadius: "50%", background: T.surfaceRaised,
+    width: size, height: size, borderRadius: "50%",
+    background: gradKey ? gradientCss(gradKey) : T.surfaceRaised,
     flexShrink: 0, boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "center",
-    border: `1px solid ${ringColor || T.borderStrong}`, overflow: "hidden",
+    border: gradKey ? "none" : `1px solid ${ringColor || T.borderStrong}`, overflow: "hidden",
+    boxShadow: gradKey ? `0 4px 14px ${(GRADIENTS[gradKey] || GRADIENTS.purple)[0]}40` : "none",
   }}>
     {photoUrl ? (
       <img src={photoUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+    ) : initial ? (
+      <span style={{ color: "#fff", fontWeight: 700, fontSize: size * 0.4, textShadow: "0 1px 3px rgba(0,0,0,0.25)" }}>{initial}</span>
     ) : (
       <PersonPlaceholder size={size} />
     )}
   </div>
 );
 
-const RestaurantLogo = ({ photoUrl = null, size = 50, ringColor = null }) => (
+// Taste fingerprint — a radar shape unique to each reviewer, drawn in their signature colors.
+// Two people's taste profiles produce visibly different shapes; this is the reviewer's visual identity.
+const TastePrint = ({ dimensions, color, colorSecondary, size = 200 }) => {
+  const n = dimensions.length;
+  const cx = size / 2;
+  const cy = size / 2;
+  const R = size * 0.36;
+  const angleAt = (i) => -Math.PI / 2 + (i * 2 * Math.PI) / n;
+  const pointAt = (i, frac) => {
+    const a = angleAt(i);
+    return [cx + R * frac * Math.cos(a), cy + R * frac * Math.sin(a)];
+  };
+  const valuePts = dimensions.map((d, i) => pointAt(i, Math.max(0.04, d.value / 100)));
+  const polyStr = valuePts.map(p => p.join(",")).join(" ");
+  const rings = [0.25, 0.5, 0.75, 1.0];
+
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ display: "block" }}>
+      {/* grid rings */}
+      {rings.map((ring, ri) => (
+        <polygon
+          key={ri}
+          points={dimensions.map((_, i) => pointAt(i, ring).join(",")).join(" ")}
+          fill="none"
+          stroke={T.border}
+          strokeWidth="1"
+        />
+      ))}
+      {/* axes */}
+      {dimensions.map((_, i) => {
+        const [x, y] = pointAt(i, 1);
+        return <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke={T.borderStrong} strokeWidth="0.75" opacity="0.5" />;
+      })}
+      {/* value shape */}
+      <polygon points={polyStr} fill={color} fillOpacity="0.32" stroke={color} strokeWidth="1.8" strokeLinejoin="round" />
+      {/* vertices */}
+      {valuePts.map(([x, y], i) => (
+        <g key={i}>
+          <circle cx={x} cy={y} r="3.2" fill={colorSecondary} />
+          <circle cx={x} cy={y} r="1.3" fill="#FFFFFF" opacity="0.85" />
+        </g>
+      ))}
+      {/* axis labels — only on larger prints, not thumbnails */}
+      {size >= 120 && dimensions.map((d, i) => {
+        const [x, y] = pointAt(i, 1.18);
+        return (
+          <text
+            key={i}
+            x={x}
+            y={y}
+            fill={T.textFaint}
+            fontSize="8"
+            fontWeight="600"
+            textAnchor="middle"
+            dominantBaseline="middle"
+            style={{ letterSpacing: "0.04em", textTransform: "uppercase" }}
+          >
+            {d.label.split(" ")[0]}
+          </text>
+        );
+      })}
+    </svg>
+  );
+};
+
+const RestaurantLogo = ({ photoUrl = null, size = 50, ringColor = null, gradKey = null, initial = null }) => (
   <div style={{
-    width: size, height: size, borderRadius: size * 0.22, background: T.surfaceRaised,
+    width: size, height: size, borderRadius: size * 0.24,
+    background: gradKey ? gradientCss(gradKey) : T.surfaceRaised,
     flexShrink: 0, boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "center",
-    border: `1px solid ${ringColor || T.border}`, overflow: "hidden",
+    border: gradKey ? "none" : `1px solid ${ringColor || T.border}`, overflow: "hidden",
+    boxShadow: gradKey ? `0 4px 14px ${(GRADIENTS[gradKey] || GRADIENTS.purple)[0]}40` : "none",
   }}>
     {photoUrl ? (
       <img src={photoUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+    ) : initial ? (
+      <span style={{ color: "#fff", fontWeight: 700, fontSize: size * 0.4, textShadow: "0 1px 3px rgba(0,0,0,0.25)" }}>{initial}</span>
     ) : (
       <StorefrontPlaceholder size={size} />
     )}
@@ -767,7 +869,7 @@ function BusinessDashboard({ restaurants, getReviewer, onRespond, onLogoUpload, 
                 background: T.surface, border: `1px solid ${T.danger}40`, borderRadius: 10, padding: 16, marginBottom: 12,
               }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                  <ReviewerAvatar photoUrl={reviewer.photoUrl} size={26} ringColor={reviewer.color} />
+                  <ReviewerAvatar photoUrl={reviewer.photoUrl} size={26} gradKey={reviewer.photoUrl ? null : reviewer.gradKey} initial={reviewer.photoUrl ? null : reviewer.name[0]} />
                   <span style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{reviewer.name}</span>
                   <span style={{ fontSize: 9, color: T.danger, marginLeft: "auto", letterSpacing: "0.06em", textTransform: "uppercase", fontWeight: 600 }}>
                     {rev.escalationReason}
@@ -834,7 +936,7 @@ function BusinessDashboard({ restaurants, getReviewer, onRespond, onLogoUpload, 
         return (
           <div key={i} style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 10, padding: 16, marginBottom: 10 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-              <ReviewerAvatar photoUrl={reviewer.photoUrl} size={24} ringColor={reviewer.color} />
+              <ReviewerAvatar photoUrl={reviewer.photoUrl} size={24} gradKey={reviewer.photoUrl ? null : reviewer.gradKey} initial={reviewer.photoUrl ? null : reviewer.name[0]} />
               <span style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{reviewer.name}</span>
               <span style={{ fontSize: 11, color: T.accent, marginLeft: "auto" }}>{"★".repeat(rev.rating)}</span>
             </div>
@@ -938,7 +1040,7 @@ function RestaurantSignup({ onComplete }) {
   return (
     <div style={{ padding: "20px 24px 0" }}>
       <div style={{ marginBottom: 18 }}>
-        <div style={{ fontSize: 18, fontWeight: 700, color: T.text, marginBottom: 4 }}>Try ForkList free for 2 weeks</div>
+        <div style={{ fontSize: 18, fontWeight: 700, color: T.text, marginBottom: 4 }}>Try Dined In free for 2 weeks</div>
         <div style={{ fontSize: 12, color: T.textMuted, lineHeight: 1.5 }}>
           QR table cards, verified reviews, and AI auto-replies — no cost, no card, no commitment to start.
         </div>
@@ -963,7 +1065,7 @@ function RestaurantSignup({ onComplete }) {
 
       {/* Form fields */}
       {[
-        { key: "restaurantName", label: "Restaurant name", placeholder: "e.g. Francine" },
+        { key: "restaurantName", label: "Restaurant name", placeholder: "e.g. The Olive Counter" },
         { key: "contactName", label: "Your name", placeholder: "e.g. Maria Chen" },
         { key: "email", label: "Email", placeholder: "you@restaurant.com" },
         { key: "phone", label: "Phone (optional)", placeholder: "(303) 555-0100" },
@@ -1086,6 +1188,8 @@ export default function DinedIn() {
   const [toast, setToast] = useState(null);
   const [myPhotoUrl, setMyPhotoUrl] = useState(null);
   const [signupSubview, setSignupSubview] = useState("signup");
+  const [restaurantQuery, setRestaurantQuery] = useState("");
+  const [cuisineFilter, setCuisineFilter] = useState("All");
 
   const getReviewer = (id) => {
     const reviewer = reviewers.find(r => r.id === id);
@@ -1179,11 +1283,28 @@ export default function DinedIn() {
 
       {/* Header */}
       <div style={{ padding: "28px 24px 18px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", gap: 14 }}>
-        <div style={{ width: 28, height: 28, borderRadius: "50%", border: `1px solid ${T.accent}`, background: "transparent" }} />
+        <svg width="30" height="30" viewBox="0 0 34 34" fill="none" style={{ flexShrink: 0 }}>
+          <circle cx="17" cy="17" r="15" stroke={T.accent} strokeWidth="1.2" />
+          <circle cx="17" cy="17" r="9.5" stroke={T.accent} strokeWidth="0.7" opacity="0.35" />
+          <path d="M12.5 17.2 L15.8 20.5 L21.8 13" stroke={T.accent} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
         <div>
           <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-0.01em", color: T.text }}>DINED IN</div>
           <div style={{ fontSize: 9, color: T.textFaint, letterSpacing: "0.16em", textTransform: "uppercase" }}>Every Review. Actually Verified.</div>
         </div>
+      </div>
+
+      {/* Demo preview banner */}
+      <div style={{
+        padding: "8px 24px", background: T.accentDim, borderBottom: `1px solid ${T.border}`,
+        textAlign: "center",
+      }}>
+        <span style={{ fontSize: 10, color: T.accent, letterSpacing: "0.04em", fontWeight: 600 }}>
+          SAMPLE DATA · PRODUCT PREVIEW
+        </span>
+        <span style={{ fontSize: 10, color: T.textMuted, marginLeft: 8 }}>
+          Restaurants and reviews shown are illustrative examples.
+        </span>
       </div>
 
       {/* Toggle */}
@@ -1207,38 +1328,110 @@ export default function DinedIn() {
 
       {/* RESTAURANTS VIEW */}
       {view === "restaurants" && !selectedRestaurant && (
-        <div style={{ padding: "20px 24px 0" }}>
-          {restaurants.map(r => {
-            const tier = calculatePrestigeTier(r);
-            const tierInfo = tier ? PRESTIGE_TIERS[tier] : null;
-            return (
-              <button
-                key={r.id}
-                onClick={() => setSelectedRestaurant(r)}
-                style={{
-                  width: "100%", background: T.surface,
-                  border: `1px solid ${tierInfo ? tierInfo.color + "50" : T.border}`,
-                  borderRadius: 10, padding: 18, marginBottom: 10, cursor: "pointer", textAlign: "left",
-                  display: "flex", gap: 14, alignItems: "center",
-                }}
-              >
-                <RestaurantLogo photoUrl={r.logoUrl} size={46} ringColor={tierInfo ? tierInfo.color : null} />
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2, flexWrap: "wrap" }}>
-                    <div style={{ fontSize: 15, fontWeight: 600, color: T.text }}>{r.name}</div>
-                    {tier && <PrestigeBadge tier={tier} size="sm" />}
-                  </div>
-                  <div style={{ fontSize: 11, color: T.textMuted, marginBottom: 6 }}>{r.cuisine}</div>
-                  <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                    <span style={{ fontSize: 12, color: T.accent, fontWeight: 600 }}>★ {r.rating} Verified</span>
-                    <span style={{ fontSize: 11, color: T.textFaint }}>vs {r.googleRating} Google</span>
-                  </div>
-                </div>
-              </button>
-            );
-          })}
+        <div style={{ padding: "16px 24px 0" }}>
+          {/* Search bar */}
           <div style={{
-            marginTop: 8, padding: "14px 16px", background: T.surface, borderRadius: 8,
+            display: "flex", alignItems: "center", gap: 10, background: T.surface,
+            border: `1px solid ${T.borderStrong}`, borderRadius: 14, padding: "12px 16px", marginBottom: 14,
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+              <circle cx="11" cy="11" r="7" stroke={T.purple} strokeWidth="2" />
+              <path d="M20 20l-3.5-3.5" stroke={T.purple} strokeWidth="2" strokeLinecap="round" />
+            </svg>
+            <input
+              value={restaurantQuery}
+              onChange={(e) => setRestaurantQuery(e.target.value)}
+              placeholder="Search restaurants, cuisines, cities..."
+              style={{
+                flex: 1, background: "transparent", border: "none", outline: "none",
+                color: T.text, fontSize: 13, fontFamily: "inherit",
+              }}
+            />
+            {restaurantQuery && (
+              <button onClick={() => setRestaurantQuery("")} style={{ background: "none", border: "none", color: T.textFaint, cursor: "pointer", fontSize: 16, lineHeight: 1 }}>×</button>
+            )}
+          </div>
+
+          {/* Filter chips */}
+          <div style={{ display: "flex", gap: 8, marginBottom: 18, overflowX: "auto", paddingBottom: 2 }}>
+            {["All", "Top Rated", "Mediterranean", "Japanese", "Asian Fusion"].map((chip, i) => {
+              const active = cuisineFilter === chip;
+              const chipColors = [T.purple, T.pink, T.amber, T.blue, T.teal];
+              const cc = chipColors[i % chipColors.length];
+              return (
+                <button
+                  key={chip}
+                  onClick={() => setCuisineFilter(chip)}
+                  style={{
+                    flexShrink: 0, padding: "7px 14px", borderRadius: 20, cursor: "pointer",
+                    border: `1px solid ${cc}`, whiteSpace: "nowrap",
+                    background: active ? cc : "transparent",
+                    color: active ? "#0E0B16" : cc,
+                    fontSize: 11, fontWeight: 700, letterSpacing: "0.02em",
+                  }}
+                >
+                  {chip}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Restaurant cards */}
+          {(() => {
+            const q = restaurantQuery.trim().toLowerCase();
+            const filtered = restaurants.filter(r => {
+              const matchesQuery = !q || r.name.toLowerCase().includes(q) || r.cuisine.toLowerCase().includes(q);
+              const matchesChip =
+                cuisineFilter === "All" ? true :
+                cuisineFilter === "Top Rated" ? r.rating >= 4.7 :
+                r.cuisine.toLowerCase().includes(cuisineFilter.toLowerCase());
+              return matchesQuery && matchesChip;
+            });
+            if (filtered.length === 0) {
+              return (
+                <div style={{ padding: "40px 0", textAlign: "center", color: T.textFaint, fontSize: 13 }}>
+                  No restaurants match "{restaurantQuery || cuisineFilter}".
+                </div>
+              );
+            }
+            return filtered.map(r => {
+              const tier = calculatePrestigeTier(r);
+              const grad = GRADIENTS[r.gradKey] || GRADIENTS.purple;
+              return (
+                <button
+                  key={r.id}
+                  onClick={() => setSelectedRestaurant(r)}
+                  style={{
+                    width: "100%", background: T.surface, position: "relative", overflow: "hidden",
+                    border: `1px solid ${T.border}`,
+                    borderRadius: 16, padding: "18px 18px 18px 22px", marginBottom: 12, cursor: "pointer", textAlign: "left",
+                    display: "flex", gap: 14, alignItems: "center",
+                  }}
+                >
+                  {/* vivid color spine */}
+                  <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 5, background: gradientCss(r.gradKey) }} />
+                  <RestaurantLogo photoUrl={r.logoUrl} size={52} gradKey={r.logoUrl ? null : r.gradKey} initial={r.logoUrl ? null : r.name[0]} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 3, flexWrap: "wrap" }}>
+                      <div style={{ fontSize: 16, fontWeight: 700, color: T.text }}>{r.name}</div>
+                      {tier && <PrestigeBadge tier={tier} size="sm" />}
+                    </div>
+                    <div style={{ fontSize: 11, color: T.textMuted, marginBottom: 8 }}>{r.cuisine}</div>
+                    <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                      <span style={{
+                        display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 10px", borderRadius: 20,
+                        background: gradientCss(r.gradKey), color: "#0E0B16", fontSize: 12, fontWeight: 700,
+                      }}>★ {r.rating}</span>
+                      <span style={{ fontSize: 11, color: T.textFaint }}>vs {r.googleRating} Google</span>
+                    </div>
+                  </div>
+                </button>
+              );
+            });
+          })()}
+
+          <div style={{
+            marginTop: 8, padding: "14px 16px", background: T.surface, borderRadius: 12,
             border: `1px solid ${T.border}`, fontSize: 12, color: T.textMuted, lineHeight: 1.6,
           }}>
             "Verified" ratings come only from reviewers with confirmed visits — receipt, check-in, or table code matched. No anonymous drive-by reviews.
@@ -1321,7 +1514,7 @@ export default function DinedIn() {
                   onClick={() => { setView("reviewers"); setSelectedReviewer(reviewer); }}
                   style={{ width: "100%", display: "flex", gap: 12, padding: 14, background: "transparent", border: "none", cursor: "pointer", textAlign: "left" }}
                 >
-                  <ReviewerAvatar photoUrl={reviewer.photoUrl} size={40} ringColor={reviewer.color} />
+                  <ReviewerAvatar photoUrl={reviewer.photoUrl} size={40} gradKey={reviewer.photoUrl ? null : reviewer.gradKey} initial={reviewer.photoUrl ? null : reviewer.name[0]} />
                   <div style={{ flex: 1 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4, flexWrap: "wrap" }}>
                       <span style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{reviewer.name}</span>
@@ -1363,7 +1556,7 @@ export default function DinedIn() {
                 display: "flex", gap: 14, alignItems: "center",
               }}
             >
-              <ReviewerAvatar photoUrl={r.photoUrl} size={50} ringColor={r.color} />
+              <ReviewerAvatar photoUrl={r.photoUrl} size={50} gradKey={r.photoUrl ? null : r.gradKey} initial={r.photoUrl ? null : r.name[0]} />
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 15, fontWeight: 600, color: T.text }}>{r.name}</div>
                 <div style={{ fontSize: 11, color: T.textMuted, marginBottom: 4 }}>{r.handle} · {r.colorName}</div>
@@ -1372,6 +1565,11 @@ export default function DinedIn() {
                   <span style={{ color: T.textFaint }}>{r.verifiedVisits} verified visits</span>
                 </div>
               </div>
+              {r.verifiedVisits > 0 && (
+                <div style={{ flexShrink: 0, opacity: 0.95 }}>
+                  <TastePrint dimensions={r.dimensions} color={r.color} colorSecondary={r.colorSecondary} size={54} />
+                </div>
+              )}
             </button>
           ))}
         </div>
@@ -1385,7 +1583,7 @@ export default function DinedIn() {
             <div style={{ padding: "24px 22px", borderBottom: `1px solid ${T.border}`, display: "flex", gap: 18, alignItems: "center" }}>
               {selectedReviewer.id === 4 ? (
                 <label style={{ position: "relative", cursor: "pointer", flexShrink: 0 }}>
-                  <ReviewerAvatar photoUrl={selectedReviewer.photoUrl} size={76} ringColor={selectedReviewer.color} />
+                  <ReviewerAvatar photoUrl={selectedReviewer.photoUrl} size={76} gradKey={selectedReviewer.photoUrl ? null : selectedReviewer.gradKey} initial={selectedReviewer.photoUrl ? null : selectedReviewer.name[0]} />
                   <div style={{
                     position: "absolute", bottom: -2, right: -2, width: 24, height: 24, borderRadius: "50%",
                     background: T.accent, border: `2px solid ${T.surface}`, display: "flex", alignItems: "center",
@@ -1394,7 +1592,7 @@ export default function DinedIn() {
                   <input type="file" accept="image/*" onChange={(e) => handleProfilePhotoUpload(e.target.files?.[0])} style={{ display: "none" }} />
                 </label>
               ) : (
-                <ReviewerAvatar photoUrl={selectedReviewer.photoUrl} size={76} ringColor={selectedReviewer.color} />
+                <ReviewerAvatar photoUrl={selectedReviewer.photoUrl} size={76} gradKey={selectedReviewer.photoUrl ? null : selectedReviewer.gradKey} initial={selectedReviewer.photoUrl ? null : selectedReviewer.name[0]} />
               )}
               <div>
                 <div style={{ fontSize: 18, fontWeight: 700, color: T.text }}>{selectedReviewer.name}</div>
@@ -1429,20 +1627,45 @@ export default function DinedIn() {
                 </div>
               </div>
 
-              <div style={{ fontSize: 10, color: T.textFaint, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, marginBottom: 12 }}>
-                Taste Dimensions
+              <div style={{ fontSize: 10, color: T.textFaint, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, marginBottom: 4 }}>
+                Taste Fingerprint
               </div>
-              {selectedReviewer.dimensions.map(d => (
-                <div key={d.label} style={{ marginBottom: 10 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                    <span style={{ fontSize: 11, color: T.textMuted }}>{d.label}</span>
-                    <span style={{ fontSize: 11, color: T.text, fontWeight: 600 }}>{d.value}</span>
+              <div style={{ fontSize: 11, color: T.textFaint, marginBottom: 8 }}>
+                A unique shape built from this reviewer's verified visits.
+              </div>
+
+              {selectedReviewer.verifiedVisits > 0 ? (
+                <>
+                  <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
+                    <TastePrint
+                      dimensions={selectedReviewer.dimensions}
+                      color={selectedReviewer.color}
+                      colorSecondary={selectedReviewer.colorSecondary}
+                      size={230}
+                    />
                   </div>
-                  <div style={{ height: 3, background: T.border, borderRadius: 2 }}>
-                    <div style={{ height: "100%", width: `${d.value}%`, background: d.color, borderRadius: 2 }} />
+                  {/* readout below the print */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 16px", marginTop: 4 }}>
+                    {selectedReviewer.dimensions.map(d => (
+                      <div key={d.label} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                        <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          <span style={{ width: 6, height: 6, borderRadius: "50%", background: d.color, display: "inline-block" }} />
+                          <span style={{ fontSize: 11, color: T.textMuted }}>{d.label}</span>
+                        </span>
+                        <span style={{ fontSize: 11, color: T.text, fontWeight: 700 }}>{d.value}</span>
+                      </div>
+                    ))}
                   </div>
+                </>
+              ) : (
+                <div style={{
+                  border: `1px dashed ${T.borderStrong}`, borderRadius: 10, padding: "28px 18px",
+                  textAlign: "center", color: T.textFaint, fontSize: 12, lineHeight: 1.6,
+                }}>
+                  Your taste fingerprint appears here once you verify your first visit.
+                  <br />Every verified review sharpens its shape.
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </div>
