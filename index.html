@@ -104,6 +104,15 @@
 
   .rest-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 64px; align-items: center; }
   @media (max-width: 860px) { .rest-grid { grid-template-columns: 1fr; gap: 40px; } }
+
+  .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+  @media (max-width: 900px) { .feature-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .feature-grid { grid-template-columns: 1fr; } }
+  .feature { background: #fff; padding: 34px 30px; }
+  .feature-ic { width: 30px; height: 30px; margin-bottom: 18px; }
+  .feature-ic svg { width: 100%; height: 100%; display: block; }
+  .feature h4 { font-family: "Fraunces", serif; font-weight: 500; font-size: 19px; letter-spacing: -0.01em; margin-bottom: 9px; }
+  .feature p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.55; }
   .rest-photo { aspect-ratio: 4/5; border-radius: 16px; background: linear-gradient(145deg, #F3F1EA, #E9E5DB); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; color: var(--ink-faint); font-size: 13px; position: relative; overflow: hidden; }
   .img-tag { position: absolute; top: 14px; left: 14px; background: rgba(20,19,15,0.5); color: #fff; font-size: 11px; padding: 4px 9px; border-radius: 6px; }
   .rest-list { list-style: none; margin: 24px 0 32px; }
@@ -142,6 +151,7 @@
     <div class="nav-links">
       <a href="#problem">The problem</a>
       <a href="#how">How it works</a>
+      <a href="#features">Features</a>
       <a href="#restaurants">For restaurants</a>
       <a href="/app/" class="nav-cta">Browse restaurants</a>
     </div>
@@ -246,7 +256,61 @@
   </div>
 </section>
 
-<section class="block" id="restaurants">
+<section class="block" id="features">
+  <div class="wrap">
+    <div class="section-head center reveal">
+      <span class="kicker">What you get</span>
+      <h2>Built to make reviews mean something again.</h2>
+      <p>Every feature exists for one reason — so the rating reflects people who actually showed up.</p>
+    </div>
+    <div class="feature-grid reveal">
+      <div class="feature">
+        <div class="feature-ic">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#2E6B52" stroke-width="1.6"/><path d="M8.5 12.2 L11 14.6 L15.8 9" stroke="#2E6B52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h4>Verified-only reviews</h4>
+        <p>Every review is tied to a confirmed visit. No bots, no fakes, no competitor sabotage — the rating finally reflects real guests.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-ic">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 5h16v11H8l-4 4V5z" stroke="#2E6B52" stroke-width="1.6" stroke-linejoin="round"/><path d="M8.5 10h7M8.5 13h4" stroke="#2E6B52" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <h4>AI-drafted replies</h4>
+        <p>Respond to every review in your own voice without lifting a finger. AI writes thoughtful replies and flags only the ones that truly need you.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-ic">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.5L12 16.5 7.1 21.1l.9-5.5-4-3.9 5.5-.8L12 3z" stroke="#2E6B52" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </div>
+        <h4>A reputation you earn</h4>
+        <p>Climb from Recognized to Select to Elite through real guest experiences. Status is earned through service — never bought.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-ic">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="#2E6B52" stroke-width="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="#2E6B52" stroke-width="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="#2E6B52" stroke-width="1.6"/><path d="M14 14h3v3M21 14v.01M21 21v-4M17 21h4" stroke="#2E6B52" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <h4>QR table codes</h4>
+        <p>A simple code on each table lets guests verify and review in seconds. We send you print-ready codes the day you join.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-ic">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5M4 19h16M8 16v-4M12 16V8M16 16v-6" stroke="#2E6B52" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h4>Business dashboard</h4>
+        <p>See your verified rating, prestige status, and what needs attention — all in one clean home base built for owners, not analysts.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-ic">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.2" stroke="#2E6B52" stroke-width="1.6"/><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="#2E6B52" stroke-width="1.6" stroke-linecap="round"/><path d="M16 8.5a3 3 0 0 1 0 5M18 19c0-2.2-1-4-2.5-4.7" stroke="#2E6B52" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </div>
+        <h4>Diners who match your room</h4>
+        <p>Each reviewer carries a taste profile and trust score, so feedback comes from people whose palate actually fits what you serve.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="restaurants" style="background:var(--paper-warm);border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);">
   <div class="wrap rest-grid">
     <div class="rest-photo reveal" style="background-image:url('/images/restaurant-interior.jpg');background-size:cover;background-position:center;"></div>
     <div class="reveal">
@@ -257,7 +321,7 @@
         <li><span class="ck">✓</span><span><b>Replies handled for you.</b> AI drafts thoughtful responses in your voice, and flags the ones that need you.</span></li>
         <li><span class="ck">✓</span><span><b>A status you climb, never purchase.</b> Recognized, Select, and Elite tiers are earned through real guest experience.</span></li>
       </ul>
-      <a href="/app/" class="btn btn-primary">Get your restaurant verified</a>
+      <a href="/restaurants/" class="btn btn-primary">Get your restaurant verified</a>
       <p style="font-size:13.5px;color:var(--ink-faint);margin-top:14px;">Free to start. No card required.</p>
     </div>
   </div>
@@ -270,7 +334,7 @@
       <p>Find a restaurant worth your evening — or claim the one you run.</p>
       <div class="cta-row" style="justify-content:center;">
         <a href="/app/" class="btn btn-primary">Find verified restaurants</a>
-        <a href="/app/" class="btn btn-ghost">Get your restaurant verified →</a>
+        <a href="/restaurants/" class="btn btn-ghost">Get your restaurant verified →</a>
       </div>
     </div>
   </div>

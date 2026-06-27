@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dined In for Restaurants — A reputation no one can fake or buy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,400;9..144,0,500;9..144,0,600;9..144,1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:#14130F; --ink-soft:#57544C; --ink-faint:#918D82;
+    --line:#E7E4DC; --line-soft:#F0EDE6; --paper:#FFFFFF; --paper-warm:#FBFAF6;
+    --seal:#2E6B52; --seal-tint:#EDF3EF; --seal-deep:#1F4E3B; --gold:#B08544; --maxw:1120px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+  body { font-family:"Inter",-apple-system,BlinkMacSystemFont,sans-serif; color:var(--ink); background:var(--paper); line-height:1.55; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:var(--maxw); margin:0 auto; padding:0 28px; }
+  .serif { font-family:"Fraunces",Georgia,serif; }
+  .reveal { opacity:0; transform:translateY(16px); transition:opacity .7s cubic-bezier(.2,.6,.2,1), transform .7s cubic-bezier(.2,.6,.2,1); }
+  .reveal.in { opacity:1; transform:none; }
+  @media (prefers-reduced-motion:reduce){ .reveal{opacity:1;transform:none;transition:none;} }
+
+  nav { position:sticky; top:0; z-index:60; background:rgba(255,255,255,0.8); backdrop-filter:saturate(180%) blur(14px); border-bottom:1px solid var(--line-soft); }
+  .nav-inner { display:flex; align-items:center; justify-content:space-between; height:64px; }
+  .brand { display:flex; align-items:center; gap:9px; font-weight:600; font-size:18px; letter-spacing:-0.01em; font-family:"Fraunces",serif; text-decoration:none; color:var(--ink); }
+  .nav-links { display:flex; align-items:center; gap:28px; }
+  .nav-links a { color:var(--ink-soft); text-decoration:none; font-size:14px; font-weight:500; }
+  .nav-links a:hover { color:var(--ink); }
+  .nav-cta { background:var(--seal); color:#fff !important; padding:9px 17px; border-radius:8px; font-weight:600; }
+  .nav-cta:hover { background:var(--seal-deep); }
+  @media (max-width:720px){ .nav-links a:not(.nav-cta){ display:none; } }
+
+  .btn { display:inline-flex; align-items:center; gap:8px; font-size:15px; font-weight:600; padding:14px 26px; border-radius:9px; text-decoration:none; cursor:pointer; border:none; transition:transform .12s, background .15s, border-color .15s; font-family:inherit; }
+  .btn:active { transform:scale(.985); }
+  .btn-primary { background:var(--seal); color:#fff; }
+  .btn-primary:hover { background:var(--seal-deep); }
+  .btn-ghost { background:#fff; color:var(--ink); border:1px solid var(--line); }
+  .btn-ghost:hover { border-color:var(--ink-faint); }
+
+  /* hero */
+  .hero { padding:84px 0 64px; }
+  .hero-grid { display:grid; grid-template-columns:1.05fr 0.95fr; gap:60px; align-items:center; }
+  @media (max-width:900px){ .hero-grid{ grid-template-columns:1fr; gap:44px; } }
+  .eyebrow { display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--seal); margin-bottom:22px; }
+  .eyebrow .dot { width:6px; height:6px; border-radius:50%; background:var(--seal); }
+  h1 { font-family:"Fraunces",serif; font-weight:400; font-size:clamp(38px,5.2vw,60px); line-height:1.04; letter-spacing:-0.02em; margin-bottom:22px; }
+  h1 em { font-style:italic; color:var(--seal); }
+  .hero p.lede { font-size:clamp(16px,1.9vw,19px); color:var(--ink-soft); max-width:46ch; margin-bottom:32px; }
+  .cta-row { display:flex; gap:13px; flex-wrap:wrap; }
+  .hero-photo { aspect-ratio:4/5; border-radius:16px; background:linear-gradient(145deg,#F3F1EA,#E9E5DB) center/cover; border:1px solid var(--line); background-image:url('/images/restaurant-interior.jpg'); background-size:cover; background-position:center; }
+
+  .band { border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft); background:var(--paper-warm); }
+  .band-inner { display:flex; justify-content:center; gap:56px; padding:28px 0; flex-wrap:wrap; }
+  .stat { text-align:center; }
+  .stat .n { font-family:"Fraunces",serif; font-size:28px; line-height:1; }
+  .stat .l { font-size:12.5px; color:var(--ink-faint); margin-top:6px; }
+
+  section.block { padding:96px 0; }
+  .kicker { font-size:12px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--seal); }
+  .section-head { max-width:54ch; margin:0 auto 52px; text-align:center; }
+  .section-head h2 { font-family:"Fraunces",serif; font-weight:400; font-size:clamp(28px,4vw,44px); letter-spacing:-0.02em; line-height:1.1; margin:14px 0 14px; }
+  .section-head p { font-size:18px; color:var(--ink-soft); }
+
+  /* problem strip */
+  .pull { font-family:"Fraunces",serif; font-weight:400; font-size:clamp(24px,3.4vw,38px); line-height:1.22; letter-spacing:-0.015em; max-width:26ch; }
+  .pull em { font-style:italic; color:var(--seal); }
+  .problem-grid { display:grid; grid-template-columns:1fr 0.85fr; gap:60px; align-items:center; }
+  @media (max-width:860px){ .problem-grid{ grid-template-columns:1fr; gap:32px; } }
+  .problem-aside p { font-size:16.5px; color:var(--ink-soft); margin-bottom:14px; }
+  .problem-aside b { color:var(--ink); }
+
+  /* benefits grid */
+  .bgrid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:16px; overflow:hidden; }
+  @media (max-width:900px){ .bgrid{ grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:560px){ .bgrid{ grid-template-columns:1fr;} }
+  .bcard { background:#fff; padding:34px 30px; }
+  .bcard .ic { width:30px; height:30px; margin-bottom:16px; }
+  .bcard h4 { font-family:"Fraunces",serif; font-weight:500; font-size:19px; margin-bottom:9px; letter-spacing:-0.01em; }
+  .bcard p { font-size:14.5px; color:var(--ink-soft); }
+
+  /* steps */
+  .how { background:var(--paper-warm); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft); }
+  .steps { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:16px; overflow:hidden; }
+  @media (max-width:820px){ .steps{ grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:480px){ .steps{ grid-template-columns:1fr;} }
+  .step { background:#fff; padding:32px 26px; }
+  .step .idx { font-family:"Fraunces",serif; font-style:italic; font-size:14px; color:var(--seal); letter-spacing:0.08em; }
+  .step h4 { font-family:"Fraunces",serif; font-weight:500; font-size:18px; margin:12px 0 8px; }
+  .step p { font-size:14px; color:var(--ink-soft); }
+
+  /* tiers */
+  .tiers { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  @media (max-width:760px){ .tiers{ grid-template-columns:1fr;} }
+  .tier { border:1px solid var(--line); border-radius:16px; padding:30px 26px; text-align:center; }
+  .tier.elite { border-color:var(--gold); box-shadow:0 18px 40px -28px rgba(176,133,68,0.5); }
+  .tier .badge { font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:6px 14px; border-radius:980px; display:inline-block; margin-bottom:16px; }
+  .tier.recognized .badge { background:#F1F0EC; color:#7A766C; }
+  .tier.select .badge { background:var(--seal-tint); color:var(--seal-deep); }
+  .tier.elite .badge { background:#F6EDDD; color:var(--gold); }
+  .tier h4 { font-family:"Fraunces",serif; font-weight:500; font-size:21px; margin-bottom:8px; }
+  .tier p { font-size:14.5px; color:var(--ink-soft); }
+
+  /* closing */
+  .closing { background:var(--ink); color:#fff; text-align:center; }
+  .closing h2 { font-family:"Fraunces",serif; font-weight:400; font-size:clamp(30px,4.4vw,48px); line-height:1.07; letter-spacing:-0.02em; margin-bottom:18px; max-width:20ch; margin:0 auto 18px; }
+  .closing h2 em { font-style:italic; color:#8FCFAE; }
+  .closing p { font-size:18px; color:rgba(255,255,255,0.66); margin-bottom:32px; }
+  .closing .note { font-size:13.5px; color:rgba(255,255,255,0.5); margin-top:16px; }
+
+  footer { padding:44px 0; border-top:1px solid var(--line-soft); }
+  .foot-inner { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; }
+  footer p { font-size:13px; color:var(--ink-faint); }
+  :focus-visible { outline:2px solid var(--seal); outline-offset:3px; border-radius:4px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-inner">
+    <a class="brand" href="/">
+      <svg width="24" height="24" viewBox="0 0 34 34" fill="none">
+        <circle cx="17" cy="17" r="15" stroke="#2E6B52" stroke-width="1.4"/>
+        <circle cx="17" cy="17" r="9.5" stroke="#2E6B52" stroke-width="0.8" opacity="0.4"/>
+        <path d="M12.5 17.2 L15.8 20.5 L21.8 13" stroke="#2E6B52" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Dined In
+    </a>
+    <div class="nav-links">
+      <a href="#why">Why it matters</a>
+      <a href="#benefits">What you get</a>
+      <a href="#how">How it works</a>
+      <a href="/app/" class="nav-cta">Claim your restaurant</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="reveal in">
+      <span class="eyebrow"><span class="dot"></span> For restaurants</span>
+      <h1>A reputation no one can <em>fake or buy.</em></h1>
+      <p class="lede">Your rating shouldn't depend on bots, rivals, or strangers who never walked through your door. Dined In gives you reviews from verified guests only — and the tools to manage them in minutes a week.</p>
+      <div class="cta-row">
+        <a href="/app/" class="btn btn-primary">Claim your restaurant — free</a>
+        <a href="#benefits" class="btn btn-ghost">See what you get →</a>
+      </div>
+      <p style="font-size:13.5px;color:var(--ink-faint);margin-top:14px;">Free to start. No card required. Live in under 10 minutes.</p>
+    </div>
+    <div class="reveal in" style="transition-delay:.1s;">
+      <div class="hero-photo"></div>
+    </div>
+  </div>
+</header>
+
+<div class="band">
+  <div class="wrap band-inner">
+    <div class="stat"><div class="n serif">100%</div><div class="l">verified-guest reviews</div></div>
+    <div class="stat"><div class="n serif">~10 min</div><div class="l">to set up your profile</div></div>
+    <div class="stat"><div class="n serif">$0</div><div class="l">to start — no card</div></div>
+  </div>
+</div>
+
+<!-- WHY -->
+<section class="block" id="why">
+  <div class="wrap problem-grid">
+    <div class="reveal">
+      <span class="kicker">Why it matters</span>
+      <p class="pull" style="margin-top:16px;">You're judged by a number <em>anyone</em> can change — except the people who actually ate here.</p>
+    </div>
+    <div class="problem-aside reveal">
+      <p>One unfair one-star from a competitor. A fake rave that reads hollow. A reviewer who clearly never ordered. Every owner knows the feeling of a rating that doesn't reflect the room.</p>
+      <p>Dined In ends it with a single rule: <b>no visit, no review.</b> What's left is a score you can stand behind — and proudly show off.</p>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="block" id="benefits" style="background:var(--paper-warm);border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">What you get</span>
+      <h2>Everything you need to own your reputation.</h2>
+      <p>Built for owners and managers — not data analysts.</p>
+    </div>
+    <div class="bgrid reveal">
+      <div class="bcard">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#2E6B52" stroke-width="1.6"/><path d="M8.5 12.2 L11 14.6 L15.8 9" stroke="#2E6B52" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h4>Reviews you can trust</h4>
+        <p>Only verified guests can rate you. Competitors and bots are locked out — your score finally reflects real service.</p>
+      </div>
+      <div class="bcard">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M4 5h16v11H8l-4 4V5z" stroke="#2E6B52" stroke-width="1.6" stroke-linejoin="round"/><path d="M8.5 10h7M8.5 13h4" stroke="#2E6B52" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+        <h4>Replies written for you</h4>
+        <p>AI drafts a thoughtful response to every review in your voice, and escalates only the ones that genuinely need your attention.</p>
+      </div>
+      <div class="bcard">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.5L12 16.5 7.1 21.1l.9-5.5-4-3.9 5.5-.8L12 3z" stroke="#2E6B52" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
+        <h4>Prestige you earn</h4>
+        <p>Rise from Recognized to Select to Elite through real guest experience. Status is never for sale — which makes it worth having.</p>
+      </div>
+      <div class="bcard">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="#2E6B52" stroke-width="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="#2E6B52" stroke-width="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="#2E6B52" stroke-width="1.6"/><path d="M14 14h3v3M21 14v.01M21 21v-4M17 21h4" stroke="#2E6B52" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+        <h4>Print-ready table codes</h4>
+        <p>We generate QR codes for your tables so guests verify and review in seconds. Print them the day you join.</p>
+      </div>
+      <div class="bcard">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5M4 19h16M8 16v-4M12 16V8M16 16v-6" stroke="#2E6B52" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h4>A dashboard built for owners</h4>
+        <p>Your verified rating, prestige status, and what needs attention — in one clean view you can scan in seconds.</p>
+      </div>
+      <div class="bcard">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.2" stroke="#2E6B52" stroke-width="1.6"/><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="#2E6B52" stroke-width="1.6" stroke-linecap="round"/><path d="M16 8.5a3 3 0 0 1 0 5M18 19c0-2.2-1-4-2.5-4.7" stroke="#2E6B52" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+        <h4>Guests who fit your room</h4>
+        <p>Every reviewer carries a taste profile and trust score, so feedback comes from palates that actually match what you serve.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section class="block how" id="how">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">Getting started</span>
+      <h2>Live in four simple steps.</h2>
+      <p>Most restaurants are up and collecting verified reviews the same day.</p>
+    </div>
+    <div class="steps reveal">
+      <div class="step"><div class="idx">i</div><h4>Claim your profile</h4><p>Find your restaurant and claim it in a couple of clicks. Free, no card.</p></div>
+      <div class="step"><div class="idx">ii</div><h4>Print your table codes</h4><p>We generate your QR codes — put them on tables, menus, or receipts.</p></div>
+      <div class="step"><div class="idx">iii</div><h4>Collect verified reviews</h4><p>Guests scan, confirm their visit, and leave reviews that actually count.</p></div>
+      <div class="step"><div class="idx">iv</div><h4>Let AI handle replies</h4><p>Respond in your voice automatically, and step in only when it matters.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- TIERS -->
+<section class="block" id="tiers">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="kicker">Prestige tiers</span>
+      <h2>A status you climb, never purchase.</h2>
+      <p>Every tier is earned through verified guest experience — which is exactly why it carries weight.</p>
+    </div>
+    <div class="tiers reveal">
+      <div class="tier recognized">
+        <span class="badge">Recognized</span>
+        <h4>You're on the map</h4>
+        <p>Your profile is verified and collecting real reviews. The foundation of a reputation you control.</p>
+      </div>
+      <div class="tier select">
+        <span class="badge">Select</span>
+        <h4>Consistently excellent</h4>
+        <p>A strong, steady record of verified guest experiences puts you a clear cut above the ordinary listing.</p>
+      </div>
+      <div class="tier elite">
+        <span class="badge">Elite</span>
+        <h4>The top of the room</h4>
+        <p>Reserved for the few with an exceptional, sustained record. Earned only — and impossible to buy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="block closing">
+  <div class="wrap reveal">
+    <h2>Your reviews, finally <em>worth standing behind.</em></h2>
+    <p>Claim your restaurant today and start collecting reviews that reflect your real guests.</p>
+    <div class="cta-row" style="justify-content:center;">
+      <a href="/app/" class="btn btn-primary">Claim your restaurant — free</a>
+      <a href="/" class="btn btn-ghost" style="background:transparent;color:#fff;border-color:rgba(255,255,255,0.28);">← Back to home</a>
+    </div>
+    <p class="note">Free to start · No card required · Live in under 10 minutes</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-inner">
+    <a class="brand" href="/">
+      <svg width="20" height="20" viewBox="0 0 34 34" fill="none">
+        <circle cx="17" cy="17" r="15" stroke="#2E6B52" stroke-width="1.4"/>
+        <path d="M12.5 17.2 L15.8 20.5 L21.8 13" stroke="#2E6B52" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Dined In
+    </a>
+    <p>© 2026 Dined In · Every review comes from a verified visit · dinedin.app</p>
+  </div>
+</footer>
+
+<script>
+  const els = document.querySelectorAll('.reveal:not(.in)');
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    els.forEach(el => el.classList.add('in'));
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    els.forEach(el => io.observe(el));
+  }
+</script>
+
+</body>
+</html>
