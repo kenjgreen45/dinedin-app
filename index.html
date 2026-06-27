@@ -74,6 +74,7 @@
   .vstamp { position: absolute; top: -16px; right: -14px; width: 84px; height: 84px; transform: rotate(11deg); }
 
   .band { border-top: 1px solid var(--line-soft); border-bottom: 1px solid var(--line-soft); background: var(--paper-warm); }
+  .hero-photo { width: 100%; height: clamp(280px, 42vw, 520px); background-image: url('/images/dining-wide.jpg'); background-size: cover; background-position: center 60%; }
   .band-inner { display: flex; justify-content: center; gap: 56px; padding: 30px 0; flex-wrap: wrap; }
   .stat { text-align: center; }
   .stat .n { font-family: "Fraunces", serif; font-size: 30px; line-height: 1; color: var(--ink); }
@@ -191,6 +192,8 @@
   </div>
 </header>
 
+<div class="hero-photo reveal" role="img" aria-label="Diners enjoying a meal at a candlelit restaurant table"></div>
+
 <div class="band">
   <div class="wrap band-inner">
     <div class="stat"><div class="n serif">100%</div><div class="l">of reviews from confirmed visits</div></div>
@@ -245,10 +248,7 @@
 
 <section class="block" id="restaurants">
   <div class="wrap rest-grid">
-    <div class="rest-photo reveal">
-      <span class="img-tag">Lifestyle photo — owner / chef in their dining room</span>
-      Image
-    </div>
+    <div class="rest-photo reveal" style="background-image:url('/images/restaurant-interior.jpg');background-size:cover;background-position:center;"></div>
     <div class="reveal">
       <span class="kicker">For restaurants</span>
       <h2 class="serif" style="font-weight:400;font-size:clamp(28px,3.6vw,40px);letter-spacing:-0.02em;line-height:1.1;margin:16px 0 6px;">A reputation no one can fake or buy.</h2>

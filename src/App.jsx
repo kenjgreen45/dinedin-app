@@ -6,40 +6,43 @@ import { useState, useRef } from "react";
 // the instant a restaurant earns or upgrades a prestige tier.
 
 const T = {
-  // Deep indigo-black canvas with vivid color as the star — the COLORPRINT energy.
-  bg: "#0E0B16",
-  surface: "#1A1525",        // raised card surface
-  surfaceRaised: "#221B33",
-  border: "#2A2040",         // subtle violet-tinted borders
-  borderStrong: "#3A2E55",
-  text: "#F0EEF5",           // bright near-white
-  textMuted: "#968EA8",      // muted lavender-gray
-  textFaint: "#665E78",
-  accent: "#C9A876",         // gold reserved for Elite tier + key trust marks
-  accentSoft: "#D8BC8E",
-  accentDim: "#C9A87622",
-  // vivid brand spectrum — used for gradient avatars, rating pills, accents
-  pink: "#FF4D8D",
-  purple: "#A24DFF",
-  blue: "#4DA6FF",
-  teal: "#2FE0A8",
-  amber: "#FF9E4D",
-  success: "#2FE0A8",        // vivid teal
-  danger: "#FF5C72",         // vivid coral-red
+  // White & minimal — matches the dinedin.app landing page. One restrained teal accent.
+  bg: "#FFFFFF",
+  surface: "#FFFFFF",          // cards are white, separated by hairline borders
+  surfaceRaised: "#FBFAF6",    // faint warm off-white for raised/inset areas
+  border: "#E7E4DC",           // hairline border
+  borderStrong: "#D8D4C9",
+  text: "#14130F",             // near-black ink
+  textMuted: "#57544C",        // soft ink
+  textFaint: "#918D82",        // faint ink
+  accent: "#2E6B52",           // the single teal-green accent (the seal color)
+  accentSoft: "#3B7A5E",
+  accentDim: "#EDF3EF",        // teal tint for soft backgrounds
+  accentDeep: "#1F4E3B",
+  gold: "#B08544",             // hairline gold, used only for star ratings
+  // Muted accent families (kept for avatars/tiers) — all calm, cohesive on white.
+  pink: "#2E6B52",
+  purple: "#2E6B52",
+  blue: "#2E6B52",
+  teal: "#2E6B52",
+  amber: "#B08544",
+  success: "#2E6B52",          // teal-green
+  danger: "#C0573A",           // muted clay (for alerts only)
 };
 
-// Vivid two-stop gradients keyed by a reviewer/restaurant's signature color family.
+// Muted single-tone "gradients" — calm tints in the teal/sage family so avatars
+// stay distinct without the loud rainbow. Each is a soft two-stop in one hue.
 const GRADIENTS = {
-  pink:   ["#FF4D8D", "#FF9E4D"],
-  purple: ["#4DA6FF", "#A24DFF"],
-  teal:   ["#2FE0A8", "#4DFFD0"],
-  blue:   ["#4DA6FF", "#7B5EFF"],
-  amber:  ["#FF9E4D", "#FFD24D"],
-  coral:  ["#FF4D8D", "#A24DFF"],
+  pink:   ["#3B7A5E", "#2E6B52"],
+  purple: ["#4A7C8C", "#356070"],
+  teal:   ["#3B7A5E", "#2E6B52"],
+  blue:   ["#4A7C8C", "#356070"],
+  amber:  ["#B89160", "#9A7240"],
+  coral:  ["#A8705E", "#8A5847"],
 };
 const gradientCss = (key) => {
-  const g = GRADIENTS[key] || GRADIENTS.purple;
-  return `linear-gradient(135deg, ${g[0]} 0%, ${g[1]} 100%)`;
+  const g = GRADIENTS[key] || GRADIENTS.teal;
+  return `linear-gradient(140deg, ${g[0]} 0%, ${g[1]} 100%)`;
 };
 
 const reviewers = [
@@ -268,9 +271,9 @@ const initialRestaurants = initialRestaurantsRaw.map(r => ({
 // reaching Elite means embodying the brand itself — earned, never purchased.
 
 const PRESTIGE_TIERS = {
-  elite: { label: "Elite", color: "#C9A876", glow: "rgba(201,168,118,0.35)" },
-  trusted: { label: "Select", color: "#8A8A8E", glow: "rgba(138,138,142,0.2)" },
-  rising: { label: "Recognized", color: "#6B5644", glow: "rgba(107,86,68,0.2)" },
+  elite: { label: "Elite", color: "#B08544", glow: "rgba(176,133,68,0.18)" },
+  trusted: { label: "Select", color: "#2E6B52", glow: "rgba(46,107,82,0.14)" },
+  rising: { label: "Recognized", color: "#7A766C", glow: "rgba(122,118,108,0.14)" },
 };
 
 // Tier criteria, pulled out as a single config block since these numbers are placeholders,
@@ -620,7 +623,7 @@ function VerifyVisitFlow({ restaurant, onComplete, onClose }) {
               onClick={() => setStep(VERIFY_STEPS.REVIEW_FORM)}
               style={{
                 width: "100%", padding: 14, borderRadius: 8, border: "none",
-                background: T.accent, color: "#1A1408", fontSize: 13, fontWeight: 700,
+                background: T.accent, color: "#fff", fontSize: 13, fontWeight: 700,
                 cursor: "pointer", letterSpacing: "0.02em",
               }}
             >
@@ -706,7 +709,7 @@ function VerifyVisitFlow({ restaurant, onComplete, onClose }) {
               style={{
                 width: "100%", padding: 14, borderRadius: 8, border: "none",
                 background: reviewText.trim() ? T.accent : T.surfaceRaised,
-                color: reviewText.trim() ? "#1A1408" : T.textFaint, fontSize: 13, fontWeight: 700,
+                color: reviewText.trim() ? "#fff" : T.textFaint, fontSize: 13, fontWeight: 700,
                 cursor: reviewText.trim() ? "pointer" : "not-allowed", letterSpacing: "0.02em",
               }}
             >
@@ -892,7 +895,7 @@ function BusinessDashboard({ restaurants, getReviewer, onRespond, onLogoUpload, 
                     <div style={{ display: "flex", gap: 8 }}>
                       <button
                         onClick={() => send(i)}
-                        style={{ flex: 1, padding: 10, borderRadius: 6, border: "none", background: T.accent, color: "#1A1408", fontSize: 12, fontWeight: 700, cursor: "pointer" }}
+                        style={{ flex: 1, padding: 10, borderRadius: 6, border: "none", background: T.accent, color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}
                       >
                         Send response
                       </button>
@@ -1095,7 +1098,7 @@ function RestaurantSignup({ onComplete }) {
         style={{
           width: "100%", padding: 14, borderRadius: 8, border: "none", marginTop: 4,
           background: isValid && !saving ? T.accent : T.surfaceRaised,
-          color: isValid && !saving ? "#1A1408" : T.textFaint,
+          color: isValid && !saving ? "#fff" : T.textFaint,
           fontSize: 13, fontWeight: 700, cursor: isValid && !saving ? "pointer" : "not-allowed",
         }}
       >
@@ -1282,16 +1285,25 @@ export default function DinedIn() {
       `}</style>
 
       {/* Header */}
-      <div style={{ padding: "28px 24px 18px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", gap: 14 }}>
-        <svg width="30" height="30" viewBox="0 0 34 34" fill="none" style={{ flexShrink: 0 }}>
-          <circle cx="17" cy="17" r="15" stroke={T.accent} strokeWidth="1.2" />
-          <circle cx="17" cy="17" r="9.5" stroke={T.accent} strokeWidth="0.7" opacity="0.35" />
-          <path d="M12.5 17.2 L15.8 20.5 L21.8 13" stroke={T.accent} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-        <div>
-          <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-0.01em", color: T.text }}>DINED IN</div>
-          <div style={{ fontSize: 9, color: T.textFaint, letterSpacing: "0.16em", textTransform: "uppercase" }}>Every Review. Actually Verified.</div>
-        </div>
+      <div style={{ padding: "28px 24px 18px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14 }}>
+        <a href="/" style={{ display: "flex", alignItems: "center", gap: 14, textDecoration: "none", cursor: "pointer" }}>
+          <svg width="30" height="30" viewBox="0 0 34 34" fill="none" style={{ flexShrink: 0 }}>
+            <circle cx="17" cy="17" r="15" stroke={T.accent} strokeWidth="1.2" />
+            <circle cx="17" cy="17" r="9.5" stroke={T.accent} strokeWidth="0.7" opacity="0.35" />
+            <path d="M12.5 17.2 L15.8 20.5 L21.8 13" stroke={T.accent} strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <div>
+            <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-0.01em", color: T.text }}>DINED IN</div>
+            <div style={{ fontSize: 9, color: T.textFaint, letterSpacing: "0.16em", textTransform: "uppercase" }}>Every Review. Actually Verified.</div>
+          </div>
+        </a>
+        <a href="/" style={{
+          display: "inline-flex", alignItems: "center", gap: 5, textDecoration: "none", flexShrink: 0,
+          color: T.textMuted, fontSize: 12, fontWeight: 600, padding: "7px 12px",
+          border: `1px solid ${T.border}`, borderRadius: 8,
+        }}>
+          ← Home
+        </a>
       </div>
 
       {/* Demo preview banner */}
@@ -1366,7 +1378,7 @@ export default function DinedIn() {
                     flexShrink: 0, padding: "7px 14px", borderRadius: 20, cursor: "pointer",
                     border: `1px solid ${cc}`, whiteSpace: "nowrap",
                     background: active ? cc : "transparent",
-                    color: active ? "#0E0B16" : cc,
+                    color: active ? "#fff" : cc,
                     fontSize: 11, fontWeight: 700, letterSpacing: "0.02em",
                   }}
                 >
@@ -1420,7 +1432,7 @@ export default function DinedIn() {
                     <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
                       <span style={{
                         display: "inline-flex", alignItems: "center", gap: 4, padding: "3px 10px", borderRadius: 20,
-                        background: gradientCss(r.gradKey), color: "#0E0B16", fontSize: 12, fontWeight: 700,
+                        background: gradientCss(r.gradKey), color: "#fff", fontSize: 12, fontWeight: 700,
                       }}>★ {r.rating}</span>
                       <span style={{ fontSize: 11, color: T.textFaint }}>vs {r.googleRating} Google</span>
                     </div>
