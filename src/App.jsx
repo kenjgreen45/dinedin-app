@@ -58,6 +58,14 @@ const reviewers = [
     tasteProfile: "Adventurous palate, leans toward bold flavors and unfamiliar cuisines. Will travel across town for an authentic hole-in-the-wall over a trendy spot. Tips generously, rarely sends food back.",
     verifiedVisits: 312,
     trustScore: 94,
+    trustBreakdown: [
+      { label: "Verified visits", detail: "312 confirmed check-ins", value: 98 },
+      { label: "Review consistency", detail: "Ratings track with the crowd", value: 91 },
+      { label: "Review depth", detail: "Detailed, specific write-ups", value: 88 },
+      { label: "Community helpfulness", detail: "1,240 found reviews helpful", value: 96 },
+      { label: "Account history", detail: "Member 3+ years, no flags", value: 95 },
+    ],
+    matchScore: 92,
     photoUrl: null,
     dimensions: [
       { label: "Adventurousness", value: 89, color: "#FF4D8D" },
@@ -78,6 +86,14 @@ const reviewers = [
     tasteProfile: "Chases the new and the Instagrammable. Loves tasting menus and chef's counters. High standards for presentation, slightly less patient with service hiccups.",
     verifiedVisits: 178,
     trustScore: 81,
+    trustBreakdown: [
+      { label: "Verified visits", detail: "178 confirmed check-ins", value: 90 },
+      { label: "Review consistency", detail: "Occasionally an outlier", value: 74 },
+      { label: "Review depth", detail: "Vivid, presentation-focused", value: 92 },
+      { label: "Community helpfulness", detail: "610 found reviews helpful", value: 80 },
+      { label: "Account history", detail: "Member 2 years, no flags", value: 84 },
+    ],
+    matchScore: 64,
     photoUrl: null,
     dimensions: [
       { label: "Adventurousness", value: 95, color: "#2FE0A8" },
@@ -98,6 +114,14 @@ const reviewers = [
     tasteProfile: "Macro-conscious, prioritizes protein and quality ingredients over indulgence. Reviews are blunt and data-driven — calls out cooking quality and freshness without sentimentality.",
     verifiedVisits: 245,
     trustScore: 97,
+    trustBreakdown: [
+      { label: "Verified visits", detail: "245 confirmed check-ins", value: 96 },
+      { label: "Review consistency", detail: "Remarkably steady ratings", value: 99 },
+      { label: "Review depth", detail: "Blunt, data-driven detail", value: 94 },
+      { label: "Community helpfulness", detail: "1,870 found reviews helpful", value: 97 },
+      { label: "Account history", detail: "Member 4+ years, no flags", value: 98 },
+    ],
+    matchScore: 71,
     photoUrl: null,
     dimensions: [
       { label: "Adventurousness", value: 52, color: "#4DA6FF" },
@@ -1186,6 +1210,9 @@ export default function DinedIn() {
   const [view, setView] = useState("restaurants");
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [selectedReviewer, setSelectedReviewer] = useState(null);
+  const [showTrustBreakdown, setShowTrustBreakdown] = useState(false);
+  const [followedReviewers, setFollowedReviewers] = useState([]);
+  const toggleFollow = (id) => setFollowedReviewers(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
   const [restaurants, setRestaurants] = useState(initialRestaurants);
   const [verifyTarget, setVerifyTarget] = useState(null);
   const [toast, setToast] = useState(null);
@@ -1570,11 +1597,17 @@ export default function DinedIn() {
             >
               <ReviewerAvatar photoUrl={r.photoUrl} size={50} gradKey={r.photoUrl ? null : r.gradKey} initial={r.photoUrl ? null : r.name[0]} />
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 15, fontWeight: 600, color: T.text }}>{r.name}</div>
+                <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                  <span style={{ fontSize: 15, fontWeight: 600, color: T.text }}>{r.name}</span>
+                  {followedReviewers.includes(r.id) && (
+                    <span style={{ fontSize: 9, fontWeight: 700, color: T.accent, border: "1px solid " + T.accent + "55", borderRadius: 980, padding: "1px 7px", textTransform: "uppercase", letterSpacing: "0.04em" }}>Following</span>
+                  )}
+                </div>
                 <div style={{ fontSize: 11, color: T.textMuted, marginBottom: 4 }}>{r.handle} · {r.colorName}</div>
                 <div style={{ display: "flex", gap: 10, fontSize: 11 }}>
                   <span style={{ color: T.accent, fontWeight: 600 }}>Trust {r.trustScore}</span>
                   <span style={{ color: T.textFaint }}>{r.verifiedVisits} verified visits</span>
+                  {r.id !== 4 && r.matchScore != null && <span style={{ color: r.color, fontWeight: 600 }}>{r.matchScore}% match</span>}
                 </div>
               </div>
               {r.verifiedVisits > 0 && (
@@ -1606,7 +1639,7 @@ export default function DinedIn() {
               ) : (
                 <ReviewerAvatar photoUrl={selectedReviewer.photoUrl} size={76} gradKey={selectedReviewer.photoUrl ? null : selectedReviewer.gradKey} initial={selectedReviewer.photoUrl ? null : selectedReviewer.name[0]} />
               )}
-              <div>
+              <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 18, fontWeight: 700, color: T.text }}>{selectedReviewer.name}</div>
                 <div style={{ fontSize: 12, color: T.textMuted, marginBottom: 8 }}>{selectedReviewer.handle}</div>
                 <div style={{
@@ -1619,6 +1652,20 @@ export default function DinedIn() {
                   <div style={{ fontSize: 10, color: T.textFaint, marginTop: 6 }}>Tap your avatar to add a photo</div>
                 )}
               </div>
+              {/* Follow button — only for other reviewers, not "You" */}
+              {selectedReviewer.id !== 4 && (
+                <button
+                  onClick={() => toggleFollow(selectedReviewer.id)}
+                  style={{
+                    flexShrink: 0, padding: "9px 18px", borderRadius: 980, cursor: "pointer", fontSize: 13, fontWeight: 700,
+                    border: followedReviewers.includes(selectedReviewer.id) ? `1px solid ${T.border}` : "none",
+                    background: followedReviewers.includes(selectedReviewer.id) ? "transparent" : T.accent,
+                    color: followedReviewers.includes(selectedReviewer.id) ? T.textMuted : "#fff",
+                  }}
+                >
+                  {followedReviewers.includes(selectedReviewer.id) ? "✓ Following" : "+ Follow"}
+                </button>
+              )}
             </div>
             <div style={{ padding: 22 }}>
               <div style={{
@@ -1628,16 +1675,75 @@ export default function DinedIn() {
                 {selectedReviewer.tasteProfile}
               </div>
 
-              <div style={{ display: "flex", gap: 16, marginBottom: 22 }}>
-                <div>
-                  <div style={{ fontSize: 19, fontWeight: 700, color: selectedReviewer.color }}>{selectedReviewer.trustScore}</div>
-                  <div style={{ fontSize: 10, color: T.textFaint, textTransform: "uppercase" }}>Trust Score</div>
+              {/* Taste Match — only shown for other reviewers (vs "You") */}
+              {selectedReviewer.id !== 4 && selectedReviewer.matchScore != null && (
+                <div style={{
+                  display: "flex", alignItems: "center", gap: 14, marginBottom: 18, padding: "14px 16px",
+                  background: `${selectedReviewer.color}14`, border: `1px solid ${selectedReviewer.color}40`, borderRadius: 12,
+                }}>
+                  <div style={{ position: "relative", width: 52, height: 52, flexShrink: 0 }}>
+                    <svg width="52" height="52" viewBox="0 0 52 52">
+                      <circle cx="26" cy="26" r="22" fill="none" stroke={T.border} strokeWidth="4" />
+                      <circle cx="26" cy="26" r="22" fill="none" stroke={selectedReviewer.color} strokeWidth="4"
+                        strokeLinecap="round" strokeDasharray={`${2 * Math.PI * 22}`}
+                        strokeDashoffset={`${2 * Math.PI * 22 * (1 - selectedReviewer.matchScore / 100)}`}
+                        transform="rotate(-90 26 26)" />
+                    </svg>
+                    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800, color: T.text }}>
+                      {selectedReviewer.matchScore}%
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: T.text }}>You match {selectedReviewer.name.split(" ")[0]} {selectedReviewer.matchScore}%</div>
+                    <div style={{ fontSize: 12, color: T.textMuted, lineHeight: 1.45 }}>
+                      {selectedReviewer.matchScore >= 85 ? "Your tastes are highly aligned — their picks are a strong signal for you."
+                        : selectedReviewer.matchScore >= 70 ? "Solid overlap in taste — worth weighing their reviews."
+                        : "Some shared taste — useful for a different perspective."}
+                    </div>
+                  </div>
                 </div>
+              )}
+
+              <div style={{ display: "flex", gap: 16, marginBottom: 14 }}>
+                <button
+                  onClick={() => setShowTrustBreakdown(v => !v)}
+                  style={{ background: "none", border: "none", padding: 0, cursor: "pointer", textAlign: "left" }}
+                >
+                  <div style={{ fontSize: 19, fontWeight: 700, color: selectedReviewer.color, display: "flex", alignItems: "center", gap: 5 }}>
+                    {selectedReviewer.trustScore}
+                    <span style={{ fontSize: 11, color: T.textFaint }}>{showTrustBreakdown ? "▲" : "▼"}</span>
+                  </div>
+                  <div style={{ fontSize: 10, color: T.textFaint, textTransform: "uppercase", borderBottom: `1px dotted ${T.textFaint}` }}>Trust Score</div>
+                </button>
                 <div>
                   <div style={{ fontSize: 19, fontWeight: 700, color: T.text }}>{selectedReviewer.verifiedVisits}</div>
                   <div style={{ fontSize: 10, color: T.textFaint, textTransform: "uppercase" }}>Verified Visits</div>
                 </div>
               </div>
+
+              {/* Trust Score breakdown — transparency on how the number is built */}
+              {showTrustBreakdown && selectedReviewer.trustBreakdown && (
+                <div style={{
+                  marginBottom: 20, padding: "14px 16px", background: T.surfaceRaised,
+                  border: `1px solid ${T.border}`, borderRadius: 10,
+                }}>
+                  <div style={{ fontSize: 11, color: T.textMuted, marginBottom: 12, lineHeight: 1.5 }}>
+                    Trust Score is earned, not bought. It's the weighted average of five signals:
+                  </div>
+                  {selectedReviewer.trustBreakdown.map(b => (
+                    <div key={b.label} style={{ marginBottom: 11 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 3 }}>
+                        <span style={{ fontSize: 12, color: T.text, fontWeight: 600 }}>{b.label}</span>
+                        <span style={{ fontSize: 12, color: selectedReviewer.color, fontWeight: 700 }}>{b.value}</span>
+                      </div>
+                      <div style={{ fontSize: 10.5, color: T.textFaint, marginBottom: 5 }}>{b.detail}</div>
+                      <div style={{ height: 4, background: T.border, borderRadius: 2 }}>
+                        <div style={{ height: "100%", width: `${b.value}%`, background: selectedReviewer.color, borderRadius: 2 }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               <div style={{ fontSize: 10, color: T.textFaint, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600, marginBottom: 4 }}>
                 Taste Fingerprint
@@ -1676,6 +1782,33 @@ export default function DinedIn() {
                 }}>
                   Your taste fingerprint appears here once you verify your first visit.
                   <br />Every verified review sharpens its shape.
+                </div>
+              )}
+
+              {/* AI recommendation — only for other reviewers */}
+              {selectedReviewer.id !== 4 && selectedReviewer.verifiedVisits > 0 && (
+                <div style={{
+                  marginTop: 20, padding: "16px 18px", borderRadius: 12,
+                  background: `linear-gradient(135deg, ${selectedReviewer.color}18, ${selectedReviewer.colorSecondary}10)`,
+                  border: `1px solid ${selectedReviewer.color}35`,
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 8 }}>
+                    <span style={{
+                      fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase",
+                      color: selectedReviewer.color, display: "inline-flex", alignItems: "center", gap: 5,
+                    }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 3l2.2 5.8L20 11l-5.8 2.2L12 19l-2.2-5.8L4 11l5.8-2.2L12 3z" fill={selectedReviewer.color}/></svg>
+                      Dined In AI
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 13, color: T.text, lineHeight: 1.6 }}>
+                    Based on your taste fingerprint and {selectedReviewer.name.split(" ")[0]}'s {selectedReviewer.matchScore}% match, you'll likely love{" "}
+                    <strong style={{ color: selectedReviewer.color }}>{selectedReviewer.name.split(" ")[0] === "Marcus" ? "Sakura & Stone" : "Ember & Oak"}</strong>
+                    {" "}— one of their recent verified favorites.
+                  </div>
+                  <div style={{ fontSize: 10.5, color: T.textFaint, marginTop: 8, fontStyle: "italic" }}>
+                    Recommendations sharpen as you verify more visits.
+                  </div>
                 </div>
               )}
             </div>
