@@ -66,6 +66,8 @@ const reviewers = [
       { label: "Account history", detail: "Member 3+ years, no flags", value: 95 },
     ],
     matchScore: 92,
+    avgRating: 4.3,
+    ratingNote: "Tends to reward bold, adventurous cooking; rarely a harsh critic.",
     photoUrl: null,
     dimensions: [
       { label: "Adventurousness", value: 89, color: "#FF4D8D" },
@@ -94,6 +96,8 @@ const reviewers = [
       { label: "Account history", detail: "Member 2 years, no flags", value: 84 },
     ],
     matchScore: 64,
+    avgRating: 4.0,
+    ratingNote: "High standards on presentation; less patient with slow service.",
     photoUrl: null,
     dimensions: [
       { label: "Adventurousness", value: 95, color: "#2FE0A8" },
@@ -122,6 +126,8 @@ const reviewers = [
       { label: "Account history", detail: "Member 4+ years, no flags", value: 98 },
     ],
     matchScore: 71,
+    avgRating: 3.8,
+    ratingNote: "Blunt, data-driven; marks down on portion size and value.",
     photoUrl: null,
     dimensions: [
       { label: "Adventurousness", value: 52, color: "#4DA6FF" },
@@ -748,6 +754,43 @@ function VerifyVisitFlow({ restaurant, onComplete, onClose }) {
 
 // ---- Business dashboard ----
 
+// Reviewer credibility context for owners — shows enough to judge a review's
+// credibility and whether it's typical, WITHOUT exposing anything that enables retaliation.
+// No real name beyond display handle, no contact info, no way to target the person.
+const ReviewerContext = ({ reviewer, ratingGiven }) => {
+  if (!reviewer) return null;
+  const avg = reviewer.avgRating;
+  const delta = (avg != null && ratingGiven != null) ? +(ratingGiven - avg).toFixed(1) : null;
+  // Is this review unusually harsh (or kind) for this reviewer?
+  let signal = null;
+  if (delta != null) {
+    if (delta <= -1.2) signal = { text: `Unusually harsh for them — they average ${avg}★`, color: T.danger };
+    else if (delta >= 1.0) signal = { text: `Unusually positive for them — they average ${avg}★`, color: T.success };
+    else signal = { text: `In line with their usual ${avg}★ average`, color: T.textMuted };
+  }
+  return (
+    <div style={{
+      background: T.surfaceRaised, border: `1px solid ${T.border}`, borderRadius: 8,
+      padding: "10px 12px", marginBottom: 12, fontSize: 11, color: T.textMuted, lineHeight: 1.5,
+    }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 12px", marginBottom: signal ? 6 : 0 }}>
+        <span style={{ color: T.success, fontWeight: 600 }}>✓ Verified visit</span>
+        <span><b style={{ color: T.text }}>Trust {reviewer.trustScore}</b> / 100</span>
+        <span>{reviewer.verifiedVisits} verified visits</span>
+      </div>
+      {signal && (
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: signal.color, flexShrink: 0 }} />
+          <span style={{ color: signal.color, fontWeight: 600 }}>{signal.text}</span>
+        </div>
+      )}
+      {reviewer.ratingNote && (
+        <div style={{ marginTop: 5, color: T.textFaint, fontStyle: "italic" }}>{reviewer.ratingNote}</div>
+      )}
+    </div>
+  );
+};
+
 function BusinessDashboard({ restaurants, getReviewer, onRespond, onLogoUpload, onToneChange }) {
   const [selectedId, setSelectedId] = useState(restaurants[0]?.id ?? null);
   const [editingIndex, setEditingIndex] = useState(null);
@@ -904,6 +947,8 @@ function BusinessDashboard({ restaurants, getReviewer, onRespond, onLogoUpload, 
                 </div>
                 <div style={{ fontSize: 12, color: T.textMuted, lineHeight: 1.5, marginBottom: 12 }}>{rev.snippet}</div>
 
+                <ReviewerContext reviewer={reviewer} ratingGiven={rev.rating} />
+
                 {editingIndex === i ? (
                   <div>
                     <textarea
@@ -968,6 +1013,7 @@ function BusinessDashboard({ restaurants, getReviewer, onRespond, onLogoUpload, 
               <span style={{ fontSize: 11, color: T.accent, marginLeft: "auto" }}>{"★".repeat(rev.rating)}</span>
             </div>
             <div style={{ fontSize: 12, color: T.textMuted, lineHeight: 1.5, marginBottom: 10 }}>{rev.snippet}</div>
+            <ReviewerContext reviewer={reviewer} ratingGiven={rev.rating} />
             <div style={{ padding: 10, background: T.surfaceRaised, borderRadius: 8, borderLeft: `2px solid ${T.success}` }}>
               <div style={{ fontSize: 9, color: T.success, fontWeight: 600, marginBottom: 3, textTransform: "uppercase", letterSpacing: "0.06em" }}>
                 {rev.status === "owner_replied" ? "Your reply" : "AI auto-reply"}
@@ -1213,6 +1259,8 @@ export default function DinedIn() {
   const [showTrustBreakdown, setShowTrustBreakdown] = useState(false);
   const [followedReviewers, setFollowedReviewers] = useState([]);
   const toggleFollow = (id) => setFollowedReviewers(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  const [helpfulVotes, setHelpfulVotes] = useState({});
+  const toggleHelpful = (key) => setHelpfulVotes(prev => ({ ...prev, [key]: !prev[key] }));
   const [restaurants, setRestaurants] = useState(initialRestaurants);
   const [verifyTarget, setVerifyTarget] = useState(null);
   const [toast, setToast] = useState(null);
@@ -1576,6 +1624,34 @@ export default function DinedIn() {
                     <div style={{ fontSize: 12, color: T.textMuted, lineHeight: 1.5 }}>{replyText}</div>
                   </div>
                 )}
+                {(() => {
+                  const voteKey = `${selectedRestaurant.id}-${i}`;
+                  const voted = !!helpfulVotes[voteKey];
+                  const baseCount = 6 + ((rev.snippet.length * 3 + i * 7) % 41); // stable per-review base
+                  const count = baseCount + (voted ? 1 : 0);
+                  return (
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "0 14px 14px" }}>
+                      <button
+                        onClick={() => toggleHelpful(voteKey)}
+                        style={{
+                          display: "inline-flex", alignItems: "center", gap: 7, cursor: "pointer",
+                          padding: "7px 14px", borderRadius: 980, fontSize: 12, fontWeight: 600,
+                          border: `1px solid ${voted ? T.accent : T.border}`,
+                          background: voted ? T.accentDim : "transparent",
+                          color: voted ? T.accent : T.textMuted,
+                        }}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill={voted ? T.accent : "none"} stroke={voted ? T.accent : T.textMuted} strokeWidth="1.8">
+                          <path d="M7 11v9M7 11l4-8a2 2 0 0 1 2.8 1.8V8h4.5a2 2 0 0 1 2 2.4l-1.4 7a2 2 0 0 1-2 1.6H7" strokeLinejoin="round" strokeLinecap="round"/>
+                        </svg>
+                        {voted ? "Helpful ✓" : "Helpful"}
+                      </button>
+                      <span style={{ fontSize: 12, color: T.textFaint }}>
+                        {count} {count === 1 ? "person" : "people"} found this helpful
+                      </span>
+                    </div>
+                  );
+                })()}
               </div>
             );
           })}
